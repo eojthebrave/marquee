@@ -1,0 +1,45 @@
+<?php
+/**
+ * @file
+ * Provide a marquee element.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function marquee_theme() {
+  return array(
+    'marquee_marquee' => array(
+      'render element' => 'element',
+    )
+  );
+}
+
+/**
+ * Implements hook_element_info().
+ */
+function marquee_element_info() {
+  $types = array();
+  $types['marquee'] = array(
+    '#theme' => 'marquee_marquee',
+  );
+  return $types;
+}
+
+/**
+ * Returns HTML for a marquee element.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - element: A render element representing the marquee.
+ *
+ * @ingroup themeable
+ */
+function theme_marquee_marquee($variables) {
+  $element = $variables['element'];
+  $attributes = isset($element['#attributes']) ? $element['#attributes'] : array();
+  $output = '<marquee' . drupal_attributes($attributes) . '>';
+  $output .= $element['#value'];
+  $output .= '</marquee>';
+  return $output;
+}
