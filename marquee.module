@@ -5,6 +5,19 @@
  */
 
 /**
+ * Implements hook_element_info().
+ */
+function marquee_element_info() {
+  $types = array();
+  // The key of the array will become the element #type. For example,
+  // #type => 'marquee'.
+  $types['marquee'] = array(
+    '#theme' => 'marquee_marquee',
+  );
+  return $types;
+}
+
+/**
  * Implements hook_theme().
  */
 function marquee_theme() {
@@ -13,17 +26,6 @@ function marquee_theme() {
       'render element' => 'element',
     )
   );
-}
-
-/**
- * Implements hook_element_info().
- */
-function marquee_element_info() {
-  $types = array();
-  $types['marquee'] = array(
-    '#theme' => 'marquee_marquee',
-  );
-  return $types;
 }
 
 /**

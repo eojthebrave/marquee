@@ -1,3 +1,4 @@
 name = Marquee
 description = Provides a marquee element.
 core = 7.x
+package = Lullabot Examples
