@@ -5,6 +5,27 @@
  */
 
 /**
+ * Implements hook_page_alter().
+ */
+function marquee_page_alter(&$page) {
+  //dsm($page);
+  
+  /*
+  if (drupal_is_front_page()) {
+    $first_node = array_shift($page['content']['system_main']['nodes']);
+    $ad = array(
+      'my_add' => array(
+        '#markup' => '<div style="padding: 20px; text-align: center; border: 1px solid #000"><img src="http://2011.tcdrupal.org/sites/2011.tcdrupal.org/themes/tcdrupal3/images/logo.png" /></div>',
+      ),
+    );
+    array_unshift($page['content']['system_main']['nodes'], $first_node,  $ad);
+  }
+  */
+
+  $page = _marquee_page_alter($page);  
+}
+
+/**
  * Implements hook_element_info().
  */
 function marquee_element_info() {
@@ -24,7 +45,10 @@ function marquee_theme() {
   return array(
     'marquee_marquee' => array(
       'render element' => 'element',
-    )
+    ),
+    'marquee_wrapper' => array(
+      'render element' => 'element',
+    ),
   );
 }
 
@@ -45,3 +69,28 @@ function theme_marquee_marquee($variables) {
   $output .= '</marquee>';
   return $output;
 }
+
+/**
+ * Wrap a div around the already-rendered #children.
+ */
+function theme_marquee_wrapper($variables) {
+  $amount = abs(rand(1, 50));
+  $direction = (abs(rand(0, 1)) == 1) ? 'left' : 'right';
+  $element = $variables['element'];
+  $output = '<marquee scrollamount="' . $amount . '" direction="'. $direction . '">';
+  $output .= $element['#children'];
+  $output .= '</div>';
+  return $output;
+}
+
+function _marquee_page_alter($element) {
+  $element['#theme_wrappers'][] = 'marquee_wrapper';
+  foreach (element_children($element) as $key) {
+    $element[$key] = _marquee_page_alter($element[$key]);
+  }
+  return $element;
+}
+
+
+
+
