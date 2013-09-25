@@ -5,25 +5,33 @@
  */
 
 /**
+ * Implements hook_menu().
+ */
+function marquee_menu() {
+  $items = array();
+  $items['admin/config/system/marquee'] = array(
+    'title' => 'Marqee',
+    'description' => 'Configurate the marquee settings for your site.',
+    'route_name' => 'marquee.settings',
+    'weight' => 20,
+  );
+  return $items;
+}
+
+/**
  * Implements hook_page_alter().
  */
 function marquee_page_alter(&$page) {
-  //dsm($page);
-  
-  /*
-  if (drupal_is_front_page()) {
-    $first_node = array_shift($page['content']['system_main']['nodes']);
-    $ad = array(
-      'my_add' => array(
-        '#markup' => '<div style="padding: 20px; text-align: center; border: 1px solid #000"><img src="http://2011.tcdrupal.org/sites/2011.tcdrupal.org/themes/tcdrupal3/images/logo.png" /></div>',
-      ),
-    );
-    array_unshift($page['content']['system_main']['nodes'], $first_node,  $ad);
-  }
-  */
+  $enabled = \Drupal::config('marquee.settings')
+    ->get('enabled');
 
-  $page = _marquee_page_alter($page);  
+  $path = \Drupal::request()->getPathInfo();
+
+  if ($enabled && $path != '/admin/config/system/marquee') {
+    $page = _marquee_page_alter($page);
+  }
 }
+
 
 /**
  * Implements hook_element_info().
@@ -43,46 +51,25 @@ function marquee_element_info() {
  */
 function marquee_theme() {
   return array(
-    'marquee_marquee' => array(
-      'render element' => 'element',
-    ),
     'marquee_wrapper' => array(
+      'template' => 'marquee-wrapper',
       'render element' => 'element',
     ),
   );
 }
 
 /**
- * Returns HTML for a marquee element.
- *
- * @param $variables
- *   An associative array containing:
- *   - element: A render element representing the marquee.
- *
- * @ingroup themeable
+ * Preprocess function for marquee-wrapper.html.twig.
  */
-function theme_marquee_marquee($variables) {
-  $element = $variables['element'];
-  $attributes = isset($element['#attributes']) ? $element['#attributes'] : array();
-  $output = '<marquee' . drupal_attributes($attributes) . '>';
-  $output .= $element['#value'];
-  $output .= '</marquee>';
-  return $output;
+function template_preprocess_marquee_wrapper(&$variables) {
+  $variables['amount'] = abs(rand(1, 50));
+  $variables['direction'] = (abs(rand(0, 1)) == 1) ? 'left' : 'right';
+  $variables['content'] = $variables['element']['#children'];
 }
 
 /**
- * Wrap a div around the already-rendered #children.
+ * Helper function to recursively apply a #theme_wrapper to nested elements.
  */
-function theme_marquee_wrapper($variables) {
-  $amount = abs(rand(1, 50));
-  $direction = (abs(rand(0, 1)) == 1) ? 'left' : 'right';
-  $element = $variables['element'];
-  $output = '<marquee scrollamount="' . $amount . '" direction="'. $direction . '">';
-  $output .= $element['#children'];
-  $output .= '</div>';
-  return $output;
-}
-
 function _marquee_page_alter($element) {
   $element['#theme_wrappers'][] = 'marquee_wrapper';
   foreach (element_children($element) as $key) {
@@ -90,7 +77,3 @@ function _marquee_page_alter($element) {
   }
   return $element;
 }
-
-
-
-

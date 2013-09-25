@@ -1,0 +1,5 @@
+name: Marquee
+type: module
+description: Provides a marquee element.
+package: Lullabot Examples
+core: 8.x

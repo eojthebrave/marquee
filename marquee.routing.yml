@@ -1,0 +1,6 @@
+marquee.settings:
+  path: '/admin/config/system/marquee'
+  defaults:
+    _form: 'Drupal\marquee\Form\MarqueeSettingsForm'
+  requirements:
+    _permission: 'administer site configuration'
